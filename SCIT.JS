@@ -776,6 +776,14 @@ function bootVoidMatrixEngine() {
 // ==========================================
 
 
-
+// This forces the audio to start on the very first touch/click anywhere on the screen
+document.addEventListener('click', function musicStarter() {
+    const audio = document.getElementById('romantic-melody');
+    if (audio) {
+        audio.play().catch(e => console.log("Still blocked, waiting for interaction"));
+    }
+    // Remove the listener once the music starts so it doesn't run every time she clicks
+    document.removeEventListener('click', musicStarter);
+}, { once: true });
 
 
