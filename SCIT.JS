@@ -92,12 +92,13 @@ let savedUserQuestions = [];
 let savedUserAnswers = [];
 
 // Pre-defined Custom Sentences for the "Answer" Mode
+// Replace your existing myQuestionsArray with this block:
 const myQuestionsArray = [
-    "What is your absolute favorite memory of us together? 😊",
-    "If we could travel anywhere right now, where would we go? ✈️",
-    "What is one secret wish you want to come true this year? 🌟",
-    "How much do you love me? (Be honest!) 🥰",
-    "What is the nicest thing I have ever done for you? ❤️"
+    "What is one thing I do that makes you feel really loved? ❤️",
+    "When you think of me, what is the first thing that pops into your mind? be honest 🤔",
+    "What is something I do that you secretly love but haven't told me yet? be honest 🤫",
+    "If you could show me exactly how you feel about me without words, what would you do? ✨",
+    "If your mom asked how I make you happy and loved, what would you say? 😊"
 ];
 
 // Save the letter content safely into memory before the DOM changes

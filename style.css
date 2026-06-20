@@ -942,10 +942,3 @@ img {
 }
 
 /* Add this to your style.css */
-@media screen and (max-width: 768px) {
-    /* This overrides any accidental rotation on mobile */
-    .action-box, .container, #app {
-        transform: rotateY(0deg) scale(1) !important;
-        transform-origin: center center;
-    }
-}
