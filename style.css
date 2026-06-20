@@ -1,0 +1,896 @@
+/* ==========================================================================
+   1. GLOBAL RESETS & GENERAL BODY SETUP
+   ========================================================================== */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body { 
+    height: 100vh; 
+    width: 100vw; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background: linear-gradient(135deg, #7b2cbf, #ff9eaf); 
+    overflow: hidden; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    transition: background 0.8s ease, background-color 0.8s ease;
+}
+
+/* ==========================================================================
+   2. REUSABLE CONTAINER & BUTTON UI ELEMENTS
+   ========================================================================== */
+.container { 
+    text-align: center; 
+    padding: 40px; 
+    background: rgba(255, 255, 255, 0.2); 
+    border-radius: 30px; 
+    backdrop-filter: blur(10px); 
+    z-index: 10; 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    color: white;
+}
+
+button { 
+    padding: 12px 30px; 
+    margin: 10px; 
+    border-radius: 25px; 
+    border: none; 
+    background: white; 
+    color: #7b2cbf; 
+    font-weight: bold; 
+    cursor: pointer; 
+    z-index: 20; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+#no-btn { 
+    position: fixed; 
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    z-index: 99999;
+}
+
+#particle-canvas { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    pointer-events: none; 
+    z-index: 100; 
+    display: none; 
+}
+
+/* ==========================================================================
+   3. AMBIENT BACKGROUND ANIMATION PARTICLES
+   ========================================================================== */
+.heart { 
+    position: absolute; 
+    width: 20px; 
+    height: 20px; 
+    background: #ff4d6d; 
+    transform: rotate(-45deg); 
+    pointer-events: none; 
+    z-index: 5; 
+    opacity: 0;
+}
+.heart::before, .heart::after { 
+    content: ""; 
+    position: absolute; 
+    width: 20px; 
+    height: 20px; 
+    background: #ff4d6d; 
+    border-radius: 50%; 
+}
+.heart::before { top: -10px; left: 0; }
+.heart::after { left: 10px; top: 0; }
+
+.sparkle {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 4;
+    box-shadow: 0 0 10px #fff, 0 0 20px #ffb703;
+    animation: twinkle 2.5s infinite ease-in-out;
+}
+
+.rose-petal {
+    position: absolute;
+    background: radial-gradient(circle at 35% 35%, #ff1e43, #b50e29);
+    border-radius: 50% 0 50% 50%;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0.85;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+
+.heart-pink {
+    position: absolute;
+    color: #ff85a2;
+    font-size: 20px;
+    animation: floatUp 6s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.rose-petal, .rose-3d, .heart-pink {
+    position: fixed;
+    z-index: 1 !important; 
+    pointer-events: none;
+}
+
+@keyframes twinkle {
+    0%, 100% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1); opacity: 0.8; }
+}
+
+@keyframes floatUp { 
+    0% { transform: translateY(100vh) rotate(-45deg); opacity: 0; } 
+    10% { opacity: 0.6; } 
+    100% { transform: translateY(-10vh) rotate(-45deg); opacity: 0; } 
+}
+
+/* ==========================================================================
+   4. CELEBRATION COMPOSITE SCREEN (COLLAGE & CALENDAR)
+   ========================================================================== */
+.final-screen { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    height: 100vh; 
+    width: 100vw; 
+    z-index: 200;
+}
+
+.card-border {
+    position: absolute;
+    top: 5vh;
+    left: 4vw;
+    width: 400px; 
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.calendar-box {
+    color: #5c1d24; 
+    font-family: 'Courier New', Courier, monospace; 
+}
+.calendar-box h3 { 
+    font-size: 1.7rem; 
+    margin-bottom: 8px; 
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 26px);
+    gap: 5px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+.day-labels { color: #9d5c63; }
+
+/* The special target day changed from 19 to 20 */
+.special-day {
+    background: #c9183b; 
+    color: white;
+    position: relative;
+    z-index: 2;
+    clip-path: path('M12 4.419c-2.826-5.695-11.999-4.064-11.999 2.708 0 3.463 3.15 6.851 11.999 12.873 8.849-6.022 11.999-9.41 11.999-12.873 0-6.797-9.191-8.384-11.999-2.708z');
+    transform: scale(1.35);
+}
+
+.dreamcatcher-graphic {
+    color: #9d5c63; 
+    font-size: 2.8rem;
+    opacity: 0.95;
+}
+
+/* Layout adjusted dynamically to cleanly showcase 3 heart-frames instead of 2 */
+.photo-collage-area {
+    position: relative;
+    width: 100%;
+    height: 55%; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heart-photo-frame {
+    position: absolute;
+    width: 150px; /* Increased size for better visibility */
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50% 50% 0 50%; /* Standard heart-cut shape */
+    border: 2px solid #ffffff; /* Adds a nice border to frame the photo */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.heart-photo-frame .photo-inner {
+    width: 92%; 
+    height: 92%;
+    background: #eae2b7;
+    clip-path: path('M50 15c-11.8-23.7-50-16.9-50 11.3 0 14.4 13.1 28.5 50 53.6 36.9-25.1 50-39.2 50-53.6 0-28.3-38.3-35-50-11.3z');
+}
+
+.heart-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures no stretching, just perfect fit */
+    object-position: center;
+}
+
+@keyframes framePopIn {
+    to { transform: translate(-50%, -50%) scale(var(--target-scale)); }
+}
+
+.vintage-signature {
+    width: 100%;
+    text-align: center;
+    font-family: 'Brush Script MT', Vivaldi, cursive;
+    color: #5c1d24; 
+    font-size: 2.5rem;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeUpText 0.8s forwards 1.8s;
+}
+
+.typewriter-header {
+    position: absolute;
+    top: 15vh;
+    right: 4vw;
+    width: 55vw;
+    text-align: center;
+    font-family: 'Brush Script MT', 'Georgia', Vivaldi, cursive, serif;
+    font-style: italic;
+    font-size: 3.5rem; 
+    font-weight: 500;
+    color: #5c1d24;
+    letter-spacing: 1px;
+    z-index: 12;
+}
+
+/* ==========================================================================
+   5. BIRTHDAY CAKE & INTERACTION MECHANICS
+   ========================================================================== */
+.right-content-wrapper {
+    position: absolute;
+    top: 32vh;
+    right: 4vw;
+    width: 55vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+.cake-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: scale(1.35) translateY(40px);
+    z-index: 25;
+    opacity: 0;
+    margin-bottom: 55px; 
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.cake-plate {
+    width: 260px;
+    height: 14px;
+    background: #fffdf9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(92, 29, 36, 0.1);
+}
+
+.cake-body {
+    width: 220px;
+    height: 110px;
+    background: #5c1d24; 
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: -4px;
+    box-shadow: inset 0 -15px 0 rgba(0,0,0,0.1);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transition: clip-path 0.5s ease;
+}
+
+.cake-body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 35px;
+    background: #fffdf9;
+    border-radius: 0 0 15px 15px;
+}
+
+.cake-body::after {
+    content: '';
+    position: absolute;
+    top: 60px; left: 0;
+    width: 100%;
+    height: 12px;
+    background: #fcd5ce;
+}
+
+.cake-body.cut {
+    clip-path: polygon(0 0, 50% 10%, 100% 0, 100% 100%, 0 100%);
+}
+
+.cake-candle {
+    width: 14px;
+    height: 60px;
+    background: repeating-linear-gradient(45deg, #fffdf9, #fffdf9 5px, #c9183b 5px, #c9183b 10px);
+    border-radius: 4px 4px 0 0;
+    position: relative;
+}
+
+.cake-candle::before {
+    content: '';
+    position: absolute;
+    top: -8px; left: 6px;
+    width: 2px;
+    height: 8px;
+    background: #333;
+}
+
+.candle-flame {
+    position: absolute;
+    top: -24px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 20px;
+    background: #ffb703;
+    border-radius: 50% 50% 20% 20% / 60% 60% 40% 40%;
+    box-shadow: 0 0 20px #ffb703, 0 0 40px #ff4d6d;
+    animation: flameFlicker 0.6s ease-in-out infinite alternate;
+}
+
+.cake-slice {
+    position: fixed; 
+    width: 50px;
+    height: 30px;
+    background: #5c1d24;
+    border-radius: 5px;
+    z-index: 999;
+    transition: transform 1s ease-in-out;
+    pointer-events: none; 
+}
+
+.cake-quote {
+    text-align: center;
+    font-family: 'Brush Script MT', 'Georgia', Vivaldi, cursive, serif;
+    font-size: 2.5rem;
+    font-style: italic;
+    color: #5c1d24;
+    opacity: 0;
+    transform: translateY(30px);
+    letter-spacing: 1px;
+    z-index: 25;
+}
+
+@keyframes flameFlicker {
+    0% { transform: translateX(-50%) scale(1) rotate(-1deg); opacity: 0.95; }
+    100% { transform: translateX(-50%) scale(1.1) rotate(2deg); opacity: 1; box-shadow: 0 0 25px #ffb703, 0 0 45px #ff4d6d; }
+}
+
+@keyframes fadeUpText {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUpCake {
+    to { opacity: 1; transform: scale(1.35) translateY(0); }
+}
+
+.eating-animation {
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; transform: scale(0.5); }
+}
+
+/* ==========================================================================
+   6. PREMIUM DESIGN CANVAS GRAPHICS (BACKGROUND DECORATIVE LAYER)
+   ========================================================================== */
+.picture-design-bg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.design-plush-heart {
+    position: absolute;
+    background: linear-gradient(135deg, #ffb3c6, #ff8da1);
+    transform: rotate(-45deg) scale(0);
+    opacity: 0.8;
+    box-shadow: inset -10px -10px 25px rgba(0,0,0,0.08), 5px 15px 30px rgba(200,80,100,0.15);
+    animation: plushPop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.design-plush-heart::before, .design-plush-heart::after {
+    content: "";
+    position: absolute;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.design-gold-flake {
+    position: absolute;
+    background: radial-gradient(circle, #ffe399 10%, #ffd066 40%, #ffb703 100%);
+    border-radius: 50%;
+    opacity: 0;
+    filter: drop-shadow(0 1px 3px rgba(212,140,0,0.4));
+    animation: flakeFadeIn 1s ease-out forwards;
+}
+
+.design-white-heart {
+    position: absolute;
+    background: #ffffff;
+    transform: rotate(-45deg) scale(0);
+    opacity: 0.85;
+    filter: drop-shadow(2px 6px 12px rgba(0,0,0,0.06));
+ 
+    animation: whiteHeartPop 1s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+}
+.design-white-heart::before, .design-white-heart::after {
+    content: "";
+    position: absolute;
+    background: #ffffff;
+    border-radius: 50%;
+}
+
+@keyframes plushPop {
+    to { transform: rotate(-45deg) scale(var(--target-scale, 1)); }
+}
+
+@keyframes whiteHeartPop {
+    to { transform: rotate(var(--target-rot, -45deg)) scale(1); }
+}
+
+@keyframes flakeFadeIn {
+    to { opacity: var(--target-op, 0.8); }
+}
+
+/* ==========================================================================
+   7. DIALOG COMPONENT POPUPS & INTERACTIVE MODALS
+   ========================================================================== */
+.popup-modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: rgba(255, 255, 255, 0.98);
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(92, 29, 36, 0.3);
+    z-index: 10000;
+    text-align: center;
+    border: 2px solid #ffb3c6;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.popup-modal h2 {
+    color: #5c1d24;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.popup-modal button {
+    padding: 10px 25px;
+    margin: 10px;
+    border-radius: 20px;
+    border: none;
+    background: #c9183b;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+/* Verification check setup replaced/removed structurally via modal container layout adjustments */
+.popup-modal input {
+    display: block;
+    width: 85%;
+    margin: 20px auto;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #ffb3c6;
+    font-size: 1rem;
+    color: #5c1d24;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.popup-modal input:focus {
+    border-color: #c9183b;
+}
+
+@keyframes popIn {
+    to { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ==========================================================================
+   8. LETTER TRANSITION & SCROLL ENGINE TYPOGRAPHY
+   ========================================================================== */
+.flip-page {
+    animation: flipOut 1s forwards;
+}
+
+@keyframes flipOut {
+    0% { transform: rotateY(0); }
+    100% { transform: rotateY(90deg); opacity: 0; }
+}
+
+body.letter-mode {
+    background-color: #2e0211 !important; 
+    background-image: none !important;
+    background-attachment: fixed !important;
+    min-height: 100vh !important;
+    width: 100vw !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    display: block !important; 
+}
+
+.letter-content-scroll {
+    width: 80%;
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 40px;
+    background: transparent !important;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #ffffff;
+    line-height: 1.8;
+    text-align: center;
+    white-space: pre-line;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+    position: relative;
+    z-index: 100 !important;
+}
+
+/* ==========================================================================
+   9. MEMORY MASK REVEALS & HEART PHOTO SHAPES
+   ========================================================================== */
+.reveal-mask {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200vmax; 
+    height: 200vmax;
+    background-color: #4a0404; 
+    transform: translate(-50%, -50%) scale(0);
+    border-radius: 50%;
+    z-index: 9999;
+    transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+body.final-page {
+    background: radial-gradient(circle at center, #720000 0%, #4a0404 50%, #2e0211 100%) !important;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: background 1s ease;
+}
+
+.final-page-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+}
+
+.heart-image-container {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 50px;
+}
+
+.heart-wrapper {
+    width: 300px;
+    height: 300px;
+    background: white;
+    border: 10px solid gold;
+    position: relative;
+    clip-path: path('M150 280 Q 280 200 280 120 A 70 70 0 0 0 150 120 A 70 70 0 0 0 20 120 Q 20 200 150 280 Z');
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    overflow: hidden; 
+}
+
+.heart-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    pointer-events: none;
+}
+
+.heart-wrapper:hover {
+    transform: scale(1.05);
+}
+
+.heart-label {
+    text-align: center;
+    color: white;
+    font-size: 2.5rem;
+    font-family: 'Dancing Script', cursive; 
+    margin-top: 15px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+
+body.rose-bg {
+    background-color: #ffc8dd !important;
+}
+/* ==========================================================================
+   10. ADVANCED 3D FLIP MECHANICS & ACTION CANVAS VIEWS
+   ========================================================================== */
+.flip-card-3d {
+    perspective: 1000px;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Front Flip (Y-Axis Rotational Spin) */
+.animate-front-flip {
+    animation: frontFlipEffect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Back Flip (Inverse Y-Axis Rotational Spin) */
+.animate-back-flip {
+    animation: backFlipEffect 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes frontFlipEffect {
+    0% { transform: rotateY(0deg) scale(1); opacity: 1; }
+    50% { transform: rotateY(90deg) scale(0.9); opacity: 0.3; }
+    100% { transform: rotateY(180deg) scale(1); opacity: 1; }
+}
+
+@keyframes backFlipEffect {
+    0% { transform: rotateY(180deg) scale(1); opacity: 1; }
+    50% { transform: rotateY(90deg) scale(0.9); opacity: 0.3; }
+    100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+}
+
+/* Dynamic Action Viewports */
+body.royal-blue-view {
+    background: radial-gradient(circle at center, #0a192f 0%, #172a45 50%, #020c1b 100%) !important;
+}
+
+body.rose-view {
+    background: radial-gradient(circle at center, #ff85a2 0%, #ff5c8a 60%, #b5179e 100%) !important;
+}
+
+/* Premium Form Elements */
+.action-box {
+    max-width: 550px;
+    width: 90%;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+    color: white;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    transform: rotateY(180deg); 
+}
+
+.action-box h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.8rem;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+
+.action-input {
+    width: 100%;
+    height: 120px;
+    padding: 15px;
+    border-radius: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1d3557;
+    font-size: 1.1rem;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    margin-bottom: 25px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.action-input:focus {
+    border-color: #ffe399;
+    box-shadow: 0 0 15px rgba(255, 227, 153, 0.5);
+}
+
+/* Disabled Interaction Utility States */
+.disabled-heart-btn {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    filter: grayscale(100%);
+}
+/* ==========================================================================
+   11. ULTIMATE HEART EXPLOSION & CINEMATIC VOID CANVAS SYSTEM
+   ========================================================================== */
+.exploding-heart {
+    position: fixed;
+    font-size: 2rem;
+    pointer-events: none;
+    z-index: 9999999;
+    animation: blastHeartOutwards 1.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes blastHeartOutwards {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(var(--scale)) rotate(var(--rot));
+        opacity: 0;
+    }
+}
+
+/* Screen Wrapper */
+.ultimate-black-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000 !important;
+    margin: 0;
+    overflow: hidden;
+    z-index: 99999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ultimate-black-screen canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Floating Center Message & Quote Overlays */
+.void-text-overlay {
+    position: absolute;
+    z-index: 10;
+    font-family: 'Dancing Script', cursive;
+    font-weight: bold;
+    font-size: 3.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 42, 109, 0.8), 0 0 40px rgba(247, 37, 133, 0.4);
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+    padding: 20px;
+    pointer-events: none;
+    width: 90%;
+    max-width: 800px;
+}
+
+.void-text-overlay.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Big Center Final Quote Overlay */
+.void-watermark {
+    position: absolute;
+    z-index: 12;
+    font-family: 'Dancing Script', cursive;
+    font-weight: bold;
+    font-size: 3.8rem;
+    color: #ffe399;
+    text-shadow: 0 0 25px rgba(255, 184, 76, 0.6), 0 0 50px rgba(218, 114, 0, 0.3);
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 2s ease, transform 2s ease;
+    padding: 20px;
+    pointer-events: none;
+    width: 90%;
+    max-width: 850px;
+    line-height: 1.4;
+}
+
+.void-watermark.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ==========================================================
+   16. FINAL DESIGN & MOBILE FIXES (Added at end)
+   ========================================================== */
+
+/* Fix Heart Shape (Upright and Symmetrical) */
+.heart {
+    position: fixed;
+    bottom: -50px;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4d6d;
+    z-index: 9999;
+    pointer-events: none;
+    transform: rotate(45deg);
+}
+
+.heart::before, .heart::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #ff4d6d;
+    border-radius: 50%;
+}
+
+.heart::before { top: -10px; left: 0; }
+.heart::after { left: 10px; top: 0; }
+
+/* Responsive Container for Mobile */
+@media (max-width: 600px) {
+    .container {
+        width: 90% !important;
+        padding: 15px !important;
+    }
+    button {
+        width: 100%;
+        max-width: 250px;
+        font-size: 18px !important; /* Prevents auto-zoom on iOS */
+    }
+}
+
+/* Ensure no horizontal scroll on mobile */
+body {
+    overflow-x: hidden;
+    width: 100vw;
+}
+
+/* Ensure images scale down */
+img {
+    max-width: 100%;
+    height: auto;
+}
