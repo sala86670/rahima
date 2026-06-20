@@ -38,7 +38,13 @@ function createRosePetal() {
     document.body.appendChild(petal);
     setTimeout(() => petal.remove(), duration * 1000);
 }
-
+// Add this helper function
+function playMusic() {
+    const audio = document.getElementById('romantic-melody');
+    if (audio && audio.paused) {
+        audio.play().catch(e => console.log("Audio play blocked", e));
+    }
+}
 // 2. NOW START THE ENGINE
 document.addEventListener("DOMContentLoaded", () => {
     // Start the decorations
@@ -52,14 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-function playMusic() {
-    const audio = document.getElementById('bg-music');
-    if (audio) {
-        audio.play().catch(error => {
-            console.log("Autoplay prevented, waiting for user interaction.");
-        });
-    }
-}
+
 // ==========================================
 // 1. ENGINE INITIALIZATION & GLOBAL STATES
 // ==========================================
