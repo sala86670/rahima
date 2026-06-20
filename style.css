@@ -894,3 +894,32 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+/* 1. Force the app to fit the screen exactly */
+body, #app {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* This stops the page from scrolling/expanding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. Control the size of your message boxes (like the cake or letter) */
+/* Replace '.content-box' with the actual class name you use for your containers */
+.content-box, .step-container, .card {
+    max-width: 90vw;    /* Keep the width comfortable */
+    max-height: 85vh;   /* Don't let it grow taller than the screen */
+    overflow-y: auto;   /* If content is too long, the box scrolls, not the whole page */
+    box-sizing: border-box;
+}
+
+/* 3. Ensure images don't force elements to be wider than the screen */
+img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
