@@ -843,83 +843,46 @@ body.rose-view {
 }
 
 /* ==========================================================
-   16. FINAL DESIGN & MOBILE FIXES (Added at end)
-   ========================================================== */
-
-/* Fix Heart Shape (Upright and Symmetrical) */
-.heart {
-    position: fixed;
-    bottom: -50px;
-    width: 20px;
-    height: 20px;
-    background-color: #ff4d6d;
-    z-index: 9999;
-    pointer-events: none;
-    transform: rotate(45deg);
-}
-
-.heart::before, .heart::after {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background-color: #ff4d6d;
-    border-radius: 50%;
-}
-
-.heart::before { top: -10px; left: 0; }
-.heart::after { left: 10px; top: 0; }
-
-/* Responsive Container for Mobile */
-@media (max-width: 600px) {
-    .container {
-        width: 90% !important;
-        padding: 15px !important;
-    }
-    button {
-        width: 100%;
-        max-width: 250px;
-        font-size: 18px !important; /* Prevents auto-zoom on iOS */
-    }
-}
-
-/* Ensure no horizontal scroll on mobile */
-body {
-    overflow-x: hidden;
-    width: 100vw;
-}
-
-/* Ensure images scale down */
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* 1. Force the app to fit the screen exactly */
-body, #app {
+ /* --- CLEAN MOBILE RESET --- */
+html, body {
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
+    overflow-x: hidden; /* Fixes side-scrolling */
+    overflow-y: hidden; /* Prevents bouncing/scrolling */
+}
+
+#app {
     width: 100vw;
     height: 100vh;
-    overflow: hidden; /* This stops the page from scrolling/expanding */
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
-/* 2. Control the size of your message boxes (like the cake or letter) */
-/* Replace '.content-box' with the actual class name you use for your containers */
-.content-box, .step-container, .card {
-    max-width: 90vw;    /* Keep the width comfortable */
-    max-height: 85vh;   /* Don't let it grow taller than the screen */
-    overflow-y: auto;   /* If content is too long, the box scrolls, not the whole page */
-    box-sizing: border-box;
+/* Force all dynamic content to shrink to fit */
+.container, .card-border, .right-content-wrapper, .popup-modal {
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    transform-origin: center center;
+    /* This scales down large elements on small screens */
+    transform: scale(0.85); 
 }
 
-/* 3. Ensure images don't force elements to be wider than the screen */
+/* Fix for the Heart Grid (6630.jpg) */
+.heart-image-container, .final-page-container {
+    flex-direction: column !important; /* Forces vertical stack */
+    gap: 10px !important;
+    transform: scale(0.7); /* Shrinks the hearts specifically */
+}
+
+/* Fix for Images */
 img {
     max-width: 100%;
-    height: auto;
+    max-height: 200px; /* Limits height so it doesn't push buttons off screen */
     object-fit: contain;
 }
+
