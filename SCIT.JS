@@ -45,6 +45,21 @@ function playMusic() {
         audio.play().catch(e => console.log("Audio play blocked", e));
     }
 }
+function playMusic() {
+    let audio = document.getElementById('romantic-melody');
+
+    if (!audio) {
+        audio = document.createElement('audio');
+        audio.id = 'romantic-melody';
+        audio.src = 'song.mp3'; // Make sure this matches your exact filename/path
+        audio.loop = true;
+        document.body.appendChild(audio);
+    }
+
+    if (audio.paused) {
+        audio.play().catch(e => console.log("Audio play blocked/waiting for interaction", e));
+    }
+}
 // 2. NOW START THE ENGINE
 document.addEventListener("DOMContentLoaded", () => {
     // Start the decorations
@@ -105,8 +120,18 @@ document.addEventListener("DOMContentLoaded", () => {
 // ==========================================
 // 2. RENDERING ENGINE
 // ==========================================
+
+function updateAppContent(htmlContent) {
+    const app = document.getElementById("app");
+    if (app) {
+        app.innerHTML = htmlContent;
+        playMusic(); // Ensure music plays on every transition
+    }
+}
 function render() {
+    const app = document.getElementById("app");
     if (!app) return;
+
     app.removeAttribute('style');
 
     if (step === 1) {
@@ -158,9 +183,15 @@ function moveNo() {
 // 4. BLAST TRANSITION ANIMATION GRAPHICS
 // ==========================================
 function blastEffect() {
-    playMusic(); // Ensure it stays active
-    app.style.display = 'none';
-    if (!canvas) return;
+    playMusic();
+    const app = document.getElementById("app");
+    const canvas = document.getElementById("particle-canvas");
+
+    if (app) app.style.display = 'none';
+    if (!canvas) {
+        loadCelebrationScreen();
+        return;
+    }
     canvas.style.display = "block";
 
     setTimeout(() => {
@@ -168,11 +199,11 @@ function blastEffect() {
         loadCelebrationScreen();
     }, 1000);
 }
-
 // ==========================================
 // 5. CELEBRATION MASTER CONTENT DESIGN
 // ==========================================
 function loadCelebrationScreen() {
+    playMusic();
     document.body.innerHTML = `
         <div class="final-screen">
             <div class="card-border">
@@ -214,12 +245,14 @@ function loadCelebrationScreen() {
             <div class="picture-design-bg" id="bg-graphics"></div>
         </div>
     `;
-
+    playMusic();
     setTimeout(buildBackgroundGraphics, 100);
     setTimeout(buildPhotoCollage, 600);
 
     const cake = document.getElementById("cake-node");
     if (cake) {
+
+
         cake.style.transition = "opacity 1s ease, transform 1s ease";
         setTimeout(() => {
             cake.style.opacity = "1";
@@ -229,6 +262,7 @@ function loadCelebrationScreen() {
 }
 
 function buildBackgroundGraphics() {
+    playMusic();
     const bg = document.getElementById("bg-graphics");
     if (!bg) return;
 
@@ -261,6 +295,7 @@ function buildBackgroundGraphics() {
 }
 
 function buildPhotoCollage() {
+
     const target = document.getElementById("collage-target");
     if (!target) return;
 
@@ -351,12 +386,18 @@ function verifySecretResponse() {
 function transitionToLetterMode() {
     document.body.className = "letter-mode";
 
+    // Change the innerHTML to use a standard paragraph tag
     document.body.innerHTML = `
-        <div class="letter-content-scroll" id="typewriter-output"></div>
+        <div class="letter-container">
+            <p id="typewriter-output" class="letter-text"></p>
+        </div>
         <div style="text-align: center; padding-bottom: 60px; position: relative; z-index: 101;">
-            <button onclick="triggerHeartButtonsScreen()" style="background: #ffffff; color: #2e0211; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">Next 🌟</button>
+            <button onclick="triggerHeartButtonsScreen()">Next 🌟</button>
         </div>
     `;
+
+    // ... rest of your existing function (the typewriter logic)
+
 
     let index = 0;
     const outputTarget = document.getElementById("typewriter-output");
