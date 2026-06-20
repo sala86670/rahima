@@ -942,10 +942,10 @@ img {
 }
 
 /* Add this to your style.css */
-@media screen and (max-width: 600px) {
-    .container, .final-screen, .action-box {
-        width: 95vw !important;
-        transform: scale(0.9);
+@media screen and (max-width: 768px) {
+    /* This overrides any accidental rotation on mobile */
+    .action-box, .container, #app {
+        transform: rotateY(0deg) scale(1) !important;
+        transform-origin: center center;
     }
-    h1 { font-size: 1.5rem !important; }
 }
